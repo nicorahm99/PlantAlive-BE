@@ -7,12 +7,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PlantServiceImpl implements PlantService {
 
+    private final PlantRepository plantRepository;
+
     @Autowired
-    PlantRepository plantRepository;
+    public PlantServiceImpl(PlantRepository plantRepository) {
+        this.plantRepository = plantRepository;
+    }
 
     @Override
     public PlantDTO createPlant(PlantDAO plant) {
@@ -20,9 +25,12 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public PlantDTO updatePlant(PlantDAO plant) {
-        return null;
+    public PlantDTO updatePlant(long plantId, double newTargetHumidity) throws NoSuchElementException {
+        PlantDAO currentPlant = plantRepository.findById(plantId).get();
+        currentPlant.setTargetHumidity(newTargetHumidity);
+        return plantRepository.save(currentPlant).toDTO();
     }
+
 
     @Override
     public boolean deletePlant(long id) {

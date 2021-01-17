@@ -1,7 +1,9 @@
 package com.plantalive.plantalive.persistence;
 
 import com.plantalive.plantalive.service.PlantDTO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +12,8 @@ import javax.persistence.Id;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlantDAO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,6 +28,7 @@ public class PlantDAO {
 
     private String name;
     private String location;
+
 
     public PlantDTO toDTO() {
         return new PlantDTO(id, ownerId, temperature, currentHumidity, targetHumidity, name, location);

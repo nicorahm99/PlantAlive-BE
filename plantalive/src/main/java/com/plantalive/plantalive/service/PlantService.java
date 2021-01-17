@@ -4,11 +4,12 @@ import com.plantalive.plantalive.persistence.PlantDAO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public interface PlantService {
     public PlantDTO createPlant(PlantDAO plant);
-    public PlantDTO updatePlant(PlantDAO plant);
+    public PlantDTO updatePlant(long plantId, double newTargetHumidity) throws NoSuchElementException;
     public boolean deletePlant(long id);
     public List<PlantDTO> getPlantsFromUser(long userId);
 }
