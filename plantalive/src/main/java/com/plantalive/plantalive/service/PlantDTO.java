@@ -16,6 +16,4 @@ public class PlantDTO {
     private double targetHumidity;
     private String name;
     private String location;
-
-    public PlantDAO toDAO(){return new PlantDAO(id, ownerId, temperature, currentHumidity, targetHumidity, name, location);}
 }

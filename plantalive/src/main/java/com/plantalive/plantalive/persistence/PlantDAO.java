@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -19,7 +16,8 @@ public class PlantDAO {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private long ownerId;
+    @ManyToOne
+    private UserDAO owner;
 
     private double temperature;
 
@@ -31,6 +29,6 @@ public class PlantDAO {
 
 
     public PlantDTO toDTO() {
-        return new PlantDTO(id, ownerId, temperature, currentHumidity, targetHumidity, name, location);
+        return new PlantDTO(id, owner.getId(), temperature, currentHumidity, targetHumidity, name, location);
     }
 }

@@ -2,6 +2,7 @@ package com.plantalive.plantalive.service;
 
 import com.plantalive.plantalive.persistence.PlantDAO;
 import com.plantalive.plantalive.persistence.PlantRepository;
+import com.plantalive.plantalive.persistence.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +13,15 @@ import java.util.NoSuchElementException;
 @Service
 public class PlantServiceImpl implements PlantService {
 
-    private final PlantRepository plantRepository;
-
     @Autowired
-    public PlantServiceImpl(PlantRepository plantRepository) {
+    public PlantServiceImpl(PlantRepository plantRepository, UserServiceImpl userService) {
         this.plantRepository = plantRepository;
+        this.userService = userService;
     }
+
+    private final PlantRepository plantRepository;
+    private final UserServiceImpl userService;
+
 
     @Override
     public PlantDTO createPlant(PlantDAO plant) {
@@ -26,7 +30,7 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public PlantDTO updatePlant(long plantId, double newTargetHumidity) throws NoSuchElementException {
-        PlantDAO currentPlant = plantRepository.findById(plantId).get();
+        PlantDAO currentPlant = plantRepository.findById(plantId).orElseThrow();
         currentPlant.setTargetHumidity(newTargetHumidity);
         return plantRepository.save(currentPlant).toDTO();
     }
@@ -47,5 +51,18 @@ public class PlantServiceImpl implements PlantService {
         List<PlantDTO> result = new ArrayList<>();
         plantRepository.findAllByOwnerId(userId).forEach(plant -> result.add(plant.toDTO()));
         return result;
+    }
+
+    @Override
+    public PlantDAO convertPlantDTOtoDAO(PlantDTO plantDTO){
+        UserDAO owner = userService.getUserById(plantDTO.getId());
+        return new PlantDAO(
+                plantDTO.getId(),
+                owner,
+                plantDTO.getTemperature(),
+                plantDTO.getCurrentHumidity(),
+                plantDTO.getTargetHumidity(),
+                plantDTO.getName(),
+                plantDTO.getLocation());
     }
 }

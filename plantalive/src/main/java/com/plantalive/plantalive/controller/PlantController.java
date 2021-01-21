@@ -28,7 +28,7 @@ public class PlantController {
     @PostMapping
     public ResponseEntity<HttpStatus> createPlant(@RequestBody PlantDTO plant){
         try {
-            plantService.createPlant(plant.toDAO());
+            plantService.createPlant(plantService.convertPlantDTOtoDAO(plant));
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e){
             logger.error("Plant from user " + plant.getOwnerId() + " could not be created", e);

@@ -12,4 +12,6 @@ public interface PlantService {
     public PlantDTO updatePlant(long plantId, double newTargetHumidity) throws NoSuchElementException;
     public boolean deletePlant(long id);
     public List<PlantDTO> getPlantsFromUser(long userId);
+
+    PlantDAO convertPlantDTOtoDAO(PlantDTO plantDTO);
 }
