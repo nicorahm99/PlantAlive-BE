@@ -55,7 +55,7 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public PlantDAO convertPlantDTOtoDAO(PlantDTO plantDTO){
-        UserDAO owner = userService.getUserById(plantDTO.getId());
+        UserDAO owner = userService.getUserById(plantDTO.getOwnerId()).toDAO();
         return new PlantDAO(
                 plantDTO.getId(),
                 owner,

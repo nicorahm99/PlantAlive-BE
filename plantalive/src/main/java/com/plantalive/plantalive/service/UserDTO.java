@@ -1,5 +1,6 @@
 package com.plantalive.plantalive.service;
 
+import com.plantalive.plantalive.persistence.UserDAO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,5 +13,9 @@ public class UserDTO {
     String name;
     String mail;
     String password;
+
+    public UserDAO toDAO() {
+        return new UserDAO(id, name, mail, password);
+    }
 }
 

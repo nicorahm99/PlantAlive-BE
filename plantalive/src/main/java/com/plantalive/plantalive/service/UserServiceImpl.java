@@ -16,7 +16,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDAO getUserById(long userId){
-        return userRepository.findById(userId).orElseThrow();
+    public UserDTO getUserById(long userId){
+        UserDAO resultUser = userRepository.findById(userId).orElseThrow();
+        return resultUser.toDTO();
+    }
+
+    @Override
+    public UserDTO createUser(UserDTO newUser) {
+        return userRepository.save(newUser.toDAO()).toSafeDTO();
+    }
+
+    @Override
+    public boolean checkCredentials(long id, String password) {
+        return userRepository.existsByIdAndPassword(id, password);
     }
 }

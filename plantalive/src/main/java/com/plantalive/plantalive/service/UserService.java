@@ -3,5 +3,7 @@ package com.plantalive.plantalive.service;
 import com.plantalive.plantalive.persistence.UserDAO;
 
 public interface UserService {
-    UserDAO getUserById(long userId);
+    UserDTO getUserById(long userId);
+    UserDTO createUser(UserDTO newUser);
+    boolean checkCredentials(long id, String password);
 }
