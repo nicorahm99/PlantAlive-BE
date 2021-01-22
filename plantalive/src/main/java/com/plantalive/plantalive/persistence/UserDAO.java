@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +17,10 @@ public class UserDAO {
     long id;
 
     String name;
+
+    @Column(unique = true)
     String mail;
+
     String password;
 
     public UserDTO toSafeDTO() {

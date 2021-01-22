@@ -5,5 +5,5 @@ import com.plantalive.plantalive.persistence.UserDAO;
 public interface UserService {
     UserDTO getUserById(long userId);
     UserDTO createUser(UserDTO newUser);
-    boolean checkCredentials(long id, String password);
+    boolean checkCredentials(String mail, String password);
 }

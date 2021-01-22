@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkCredentials(long id, String password) {
-        return userRepository.existsByIdAndPassword(id, password);
+    public boolean checkCredentials(String mail, String password) {
+        return userRepository.existsByMailAndPassword(mail, password);
     }
 }
