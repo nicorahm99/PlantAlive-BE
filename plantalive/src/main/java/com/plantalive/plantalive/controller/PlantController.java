@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/plants")
 public class PlantController {
@@ -39,7 +39,14 @@ public class PlantController {
 
     @GetMapping("/fromUser/{userId}")
     public ResponseEntity<List<PlantDTO>> getPlantsFromUserById(@PathVariable long userId){
-        return new ResponseEntity<>(plantService.getPlantsFromUser(userId), HttpStatus.NOT_FOUND);
+        try{
+            logger.debug("Trying to find plants form user" + userId);
+            return new ResponseEntity<>(plantService.getPlantsFromUser(userId), HttpStatus.OK);
+        } catch (Exception e){
+            logger.error("Error while trying to get plants from User " + userId,e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 
     @PutMapping("/targetHumidity/{plantId}/{newTargetHumidity}")

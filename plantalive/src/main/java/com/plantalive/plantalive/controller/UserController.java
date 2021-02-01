@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+import java.util.NoSuchElementException;
+
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -38,12 +40,17 @@ public class UserController {
         }
     }
 
-    @GetMapping("/auth")
-    public ResponseEntity<HttpStatus> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest){
-        if (userService.checkCredentials(authenticationRequest.getMail(), authenticationRequest.getPassword())){
-            return ResponseEntity.status(HttpStatus.OK).build();
+    @PostMapping("/auth")
+    public ResponseEntity<UserDTO> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest){
+        try{
+            UserDTO user = userService.checkCredentials(authenticationRequest.getMail(), authenticationRequest.getPassword());
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (Exception e){
+            logger.error("Uncaught Exception in UserController", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
 
