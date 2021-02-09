@@ -65,4 +65,9 @@ public class PlantServiceImpl implements PlantService {
                 plantDTO.getName(),
                 plantDTO.getLocation());
     }
+
+    @Override
+    public PlantDTO getPlantById(long plantId) {
+        return plantRepository.findById(plantId).orElseThrow().toDTO();
+    }
 }

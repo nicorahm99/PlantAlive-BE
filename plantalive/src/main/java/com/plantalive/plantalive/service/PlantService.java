@@ -14,4 +14,6 @@ public interface PlantService {
     public List<PlantDTO> getPlantsFromUser(long userId);
 
     PlantDAO convertPlantDTOtoDAO(PlantDTO plantDTO);
+
+    PlantDTO getPlantById(long plantId);
 }

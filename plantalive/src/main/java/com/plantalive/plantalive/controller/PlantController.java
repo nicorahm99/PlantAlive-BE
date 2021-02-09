@@ -37,6 +37,15 @@ public class PlantController {
         }
     }
 
+    @GetMapping("/{plantId}")
+    public ResponseEntity<PlantDTO> getPlantById(@PathVariable long plantId){
+        try{
+            return new ResponseEntity<>(plantService.getPlantById(plantId), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
     @GetMapping("/fromUser/{userId}")
     public ResponseEntity<List<PlantDTO>> getPlantsFromUserById(@PathVariable long userId){
         try{
