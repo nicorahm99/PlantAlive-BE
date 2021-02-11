@@ -1,6 +1,7 @@
 package com.plantalive.plantalive.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -52,9 +53,9 @@ public class ImageController {
     }
 
 
-    @GetMapping(path = {"/get/{plantId}"})
+    @GetMapping(path = {"/{plantId}"})
     public ResponseEntity<ImageDAO> getImage(@PathVariable("plantId") long plantId) throws IOException {
-        final Optional<ImageDAO> retrievedImage = imageRepository.findById(plantId);
+        final Optional<ImageDAO> retrievedImage = imageRepository.findByPlantId(plantId);
         try {
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ImageDAO(
@@ -64,9 +65,12 @@ public class ImageController {
                             decompressBytes(retrievedImage.get().getPicByte())
                     )
             );
+        } catch (NoSuchElementException e){
+            logger.debug("Image could not be returned", e);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e){
-            logger.error("Image could not be returned", e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            logger.error("Unknown Error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
