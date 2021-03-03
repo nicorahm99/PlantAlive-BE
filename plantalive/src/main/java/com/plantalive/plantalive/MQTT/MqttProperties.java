@@ -1,4 +1,4 @@
-package com.plantalive.plantalive.config;
+package com.plantalive.plantalive.MQTT;
 
 import lombok.Getter;
 import lombok.Setter;

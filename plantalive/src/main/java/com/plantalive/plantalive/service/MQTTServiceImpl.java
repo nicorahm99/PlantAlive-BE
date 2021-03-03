@@ -1,12 +1,14 @@
 package com.plantalive.plantalive.service;
 
-import com.plantalive.plantalive.config.MqttProperties;
-import com.plantalive.plantalive.config.MqttQOS;
+import com.plantalive.plantalive.MQTT.MqttChannel;
+import com.plantalive.plantalive.MQTT.MqttConstants;
+import com.plantalive.plantalive.MQTT.MqttProperties;
 import com.plantalive.plantalive.exceptions.MqttClientNotConnectedException;
-import org.eclipse.paho.client.mqttv3.*;
-import org.springframework.stereotype.Service;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-@Service
 public class MQTTServiceImpl implements MQTTService {
     private final IMqttClient mqttClient;
 
@@ -19,23 +21,25 @@ public class MQTTServiceImpl implements MQTTService {
     public void publishMqttMessage(String message, String topic) throws MqttException {
         if (!mqttClient.isConnected()) throw new MqttClientNotConnectedException();
         MqttMessage mqttMessage = buildMqttMessage(message);
-        mqttMessage.setQos(MqttQOS.EXACTLY_ONCE);
+        mqttMessage.setQos(MqttConstants.QOS_EXACTLY_ONCE);
         mqttMessage.setRetained(true);
         mqttClient.publish(topic,mqttMessage);
     }
 
     @Override
-    public void subscribeTopic(String topicToBeSubscribed) throws MqttException {
-        mqttClient.subscribe(topicToBeSubscribed, (topic, msg) -> {
-            System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
-            System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
-            System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
-            System.out.print("Received Message: ");
-            System.out.println(msg + " from Topic " + topic);
-            System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
-            System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
-            System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
-        });
+    public void subscribeTopic(MqttChannel channel) throws MqttException {
+        mqttClient.subscribe(channel.getTopic().getTopicName(), channel::handleMessage);
+    }
+
+    private void reactToMessage(String topic, MqttMessage message){
+        System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+        System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+        System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+        System.out.print("Received Message: ");
+        System.out.println(message + " from Topic " + topic);
+        System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+        System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+        System.out.println("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
     }
 
 }

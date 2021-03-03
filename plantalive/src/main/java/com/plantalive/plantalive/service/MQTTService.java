@@ -1,5 +1,6 @@
 package com.plantalive.plantalive.service;
 
+import com.plantalive.plantalive.MQTT.MqttChannel;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -15,7 +16,7 @@ public interface MQTTService {
         return new MqttMessage(payload);
     }
 
-    void subscribeTopic(String topicToBeSubscribed) throws MqttException;
+    void subscribeTopic(MqttChannel channel) throws MqttException;
 
     default IMqttClient connectClient(IMqttClient client) throws MqttException {
         client.connect(getMqttConnectOptions());
