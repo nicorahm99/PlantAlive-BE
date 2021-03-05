@@ -1,8 +1,6 @@
 package com.plantalive.plantalive.service;
 
-import com.plantalive.plantalive.persistence.PlantDAO;
-import com.plantalive.plantalive.persistence.PlantRepository;
-import com.plantalive.plantalive.persistence.UserDAO;
+import com.plantalive.plantalive.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +12,15 @@ import java.util.NoSuchElementException;
 public class PlantServiceImpl implements PlantService {
 
     @Autowired
-    public PlantServiceImpl(PlantRepository plantRepository, UserServiceImpl userService) {
+    public PlantServiceImpl(PlantRepository plantRepository, UserServiceImpl userService, TopicRepository topicRepository) {
         this.plantRepository = plantRepository;
         this.userService = userService;
+        this.topicRepository = topicRepository;
     }
 
     private final PlantRepository plantRepository;
     private final UserServiceImpl userService;
+    private final TopicRepository topicRepository;
 
 
     @Override
@@ -63,11 +63,24 @@ public class PlantServiceImpl implements PlantService {
                 plantDTO.getCurrentHumidity(),
                 plantDTO.getTargetHumidity(),
                 plantDTO.getName(),
-                plantDTO.getLocation());
+                plantDTO.getLocation(),
+                plantDTO.getTopicId()
+                );
     }
 
     @Override
     public PlantDTO getPlantById(long plantId) {
         return plantRepository.findById(plantId).orElseThrow().toDTO();
+    }
+
+    @Override
+    public List<String> getAllAvailablePlants() {
+        var availableTopics = topicRepository.findAllByPlantIdIsNull();
+        List<String> availableTopicNames = new ArrayList<>();
+        for (TopicDAO topic:availableTopics
+             ) {
+            availableTopicNames.add(topic.getTopicName());
+        }
+        return availableTopicNames;
     }
 }

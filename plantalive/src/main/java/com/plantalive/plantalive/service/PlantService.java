@@ -16,4 +16,6 @@ public interface PlantService {
     PlantDAO convertPlantDTOtoDAO(PlantDTO plantDTO);
 
     PlantDTO getPlantById(long plantId);
+
+    List<String> getAllAvailablePlants();
 }

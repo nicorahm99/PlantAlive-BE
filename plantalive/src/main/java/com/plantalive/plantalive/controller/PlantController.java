@@ -59,6 +59,16 @@ public class PlantController {
 
     }
 
+    @GetMapping("/available")
+    public ResponseEntity<List<String>> getAllAvailablePlants(){
+        try{
+            return ResponseEntity.status(HttpStatus.OK).body(plantService.getAllAvailablePlants());
+        } catch (Exception e){
+            logger.error("Available Plants could not be read!", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PutMapping("/targetHumidity/{plantId}/{newTargetHumidity}")
     public ResponseEntity<PlantDTO> updateTargetHumidity(@PathVariable long plantId, @PathVariable double newTargetHumidity){
         try{

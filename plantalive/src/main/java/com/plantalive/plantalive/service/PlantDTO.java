@@ -1,6 +1,5 @@
 package com.plantalive.plantalive.service;
 
-import com.plantalive.plantalive.persistence.PlantDAO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -16,4 +15,5 @@ public class PlantDTO {
     private double targetHumidity;
     private String name;
     private String location;
+    private long topicId;
 }

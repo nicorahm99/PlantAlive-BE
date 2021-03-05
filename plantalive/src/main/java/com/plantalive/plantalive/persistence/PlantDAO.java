@@ -27,8 +27,9 @@ public class PlantDAO {
     private String name;
     private String location;
 
+    private long topicId;
 
     public PlantDTO toDTO() {
-        return new PlantDTO(id, owner.getId(), temperature, currentHumidity, targetHumidity, name, location);
+        return new PlantDTO(id, owner.getId(), temperature, currentHumidity, targetHumidity, name, location, topicId);
     }
 }
