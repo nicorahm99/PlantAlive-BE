@@ -4,6 +4,7 @@ import com.plantalive.plantalive.service.PlantDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlantDAO {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

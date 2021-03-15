@@ -4,6 +4,7 @@ import com.plantalive.plantalive.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -12,15 +13,18 @@ import java.util.NoSuchElementException;
 public class PlantServiceImpl implements PlantService {
 
     @Autowired
-    public PlantServiceImpl(PlantRepository plantRepository, UserServiceImpl userService, TopicRepository topicRepository) {
+    public PlantServiceImpl(PlantRepository plantRepository, UserServiceImpl userService, TopicRepository topicRepository, ImageRepository imageRepository) {
         this.plantRepository = plantRepository;
         this.userService = userService;
         this.topicRepository = topicRepository;
+        this.imageRepository = imageRepository;
     }
 
     private final PlantRepository plantRepository;
     private final UserServiceImpl userService;
     private final TopicRepository topicRepository;
+    private final ImageRepository imageRepository;
+
 
 
     @Override
@@ -41,8 +45,15 @@ public class PlantServiceImpl implements PlantService {
 
 
     @Override
+    @Transactional
     public boolean deletePlant(long id) {
         try {
+            imageRepository.deleteAllByPlantId(id);
+            topicRepository.findAllByPlantId(id).forEach(
+                    topicDAO -> {
+                        topicDAO.setPlantId(0);
+                        topicRepository.save(topicDAO);
+                    });
             plantRepository.deleteById(id);
             return true;
         } catch (Exception e){
@@ -60,6 +71,7 @@ public class PlantServiceImpl implements PlantService {
     @Override
     public PlantDAO convertPlantDTOtoDAO(PlantDTO plantDTO){
         UserDAO owner = userService.getUserById(plantDTO.getOwnerId()).toDAO();
+        TopicDAO topic = topicRepository.findByTopicName(plantDTO.getTopicName()).orElseThrow();
         return new PlantDAO(
                 plantDTO.getId(),
                 owner,
@@ -68,7 +80,7 @@ public class PlantServiceImpl implements PlantService {
                 plantDTO.getTargetHumidity(),
                 plantDTO.getName(),
                 plantDTO.getLocation(),
-                plantDTO.getTopicId()
+                topic.getId()
                 );
     }
 

@@ -89,6 +89,15 @@ public class PlantController {
         }
     }
 
+    @DeleteMapping("/{plantId}")
+    public ResponseEntity<Boolean> deletePlantById(@PathVariable long plantId){
+        try{
+            return new ResponseEntity<>(plantService.deletePlant(plantId), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
     @PostConstruct
     private void initMqttChannelNew(){
         try {

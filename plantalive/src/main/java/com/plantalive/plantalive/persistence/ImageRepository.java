@@ -8,4 +8,5 @@ import java.util.Optional;
 @Repository
 public interface ImageRepository extends CrudRepository<ImageDAO, Long> {
     Optional<ImageDAO> findByPlantId(Long plantId);
+    void deleteAllByPlantId(long plantId);
 }
