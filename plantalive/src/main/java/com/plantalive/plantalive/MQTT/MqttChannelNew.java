@@ -22,15 +22,17 @@ public class MqttChannelNew extends MqttChannel{
     public MqttChannelNew(MQTTService mqttService, TopicRepository topicRepository) {
         this.mqttService = mqttService;
         this.topicRepository = topicRepository;
-        this.topic =  new TopicDAO(MqttConstants.TOPIC_NEW);
+        this.topic = new TopicDAO(MqttConstants.TOPIC_NEW);
     }
 
     @Override
     public void handleMessage(String ignored, MqttMessage message) {
+        logger.info("Handle Message {} on Topic New", message);
         String newTopicName = message.toString();
         TopicDAO topic = topicRepository.save(new TopicDAO(newTopicName));
         MqttChannel newChannel = new MqttChannelCustom(topic);
         try {
+            logger.info("Trying to subscribe to new Topic: {}", topic.getTopicName());
             mqttService.subscribeTopic(newChannel);
         } catch (MqttException e) {
             //TODO Retry
@@ -42,6 +44,5 @@ public class MqttChannelNew extends MqttChannel{
     public TopicDAO getTopic() {
         return topic;
     }
-
 
 }

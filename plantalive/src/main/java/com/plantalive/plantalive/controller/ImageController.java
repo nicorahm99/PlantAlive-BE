@@ -1,11 +1,4 @@
 package com.plantalive.plantalive.controller;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 import com.plantalive.plantalive.persistence.ImageDAO;
 import com.plantalive.plantalive.persistence.ImageRepository;
@@ -14,14 +7,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -45,6 +40,22 @@ public class ImageController {
             ImageDAO img = new ImageDAO(plantId, file.getOriginalFilename(), file.getContentType(),
                     compressBytes(file.getBytes()));
             imageRepository.save(img);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e){
+            logger.error("Image could not be uploaded", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping("/upload/{plantId}")
+    public ResponseEntity<HttpStatus> updateImage(@RequestParam("imageFile") MultipartFile file, @PathVariable long plantId) throws IOException {
+        logger.debug("Original Image Byte Size - " + file.getBytes().length);
+        try {
+            ImageDAO imageDAO = imageRepository.findByPlantId(plantId).orElseThrow();
+            imageDAO.setPicByte(compressBytes(file.getBytes()));
+            imageDAO.setType(file.getContentType());
+            imageDAO.setName(file.getOriginalFilename());
+            imageRepository.save(imageDAO);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e){
             logger.error("Image could not be uploaded", e);

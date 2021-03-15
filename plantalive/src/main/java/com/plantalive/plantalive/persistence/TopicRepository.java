@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TopicRepository extends CrudRepository<TopicDAO, Long> {
-    List<TopicDAO> findAllByPlantIdIsNull();
+    List<TopicDAO> findAllByPlantId(long plantId);
     Optional<TopicDAO> findByTopicName(String topicName);
 }

@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 @Service
 public interface PlantService {
     public PlantDTO createPlant(PlantDAO plant);
-    public PlantDTO updatePlant(long plantId, double newTargetHumidity) throws NoSuchElementException;
+    public PlantDTO updatePlant(PlantDAO updatedPlant) throws NoSuchElementException;
     public boolean deletePlant(long id);
     public List<PlantDTO> getPlantsFromUser(long userId);
 

@@ -29,10 +29,14 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public PlantDTO updatePlant(long plantId, double newTargetHumidity) throws NoSuchElementException {
-        PlantDAO currentPlant = plantRepository.findById(plantId).orElseThrow();
-        currentPlant.setTargetHumidity(newTargetHumidity);
-        return plantRepository.save(currentPlant).toDTO();
+    public PlantDTO updatePlant(PlantDAO plant) throws NoSuchElementException {
+        PlantDAO plantToUpdate = plantRepository.findById(plant.getId()).orElseThrow();
+
+        plantToUpdate.setTargetHumidity(plant.getTargetHumidity());
+        plantToUpdate.setName(plant.getName());
+        plantToUpdate.setLocation(plant.getLocation());
+
+        return plantRepository.save(plantToUpdate).toDTO();
     }
 
 
@@ -75,7 +79,7 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public List<String> getAllAvailablePlants() {
-        var availableTopics = topicRepository.findAllByPlantIdIsNull();
+        var availableTopics = topicRepository.findAllByPlantId(0);
         List<String> availableTopicNames = new ArrayList<>();
         for (TopicDAO topic:availableTopics
              ) {

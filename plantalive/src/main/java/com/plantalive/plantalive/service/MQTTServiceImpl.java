@@ -19,6 +19,7 @@ public class MQTTServiceImpl implements MQTTService {
         this.mqttClient = connectClient(clientToBeConnected);
     }
 
+
     @Override
     public void publishMqttMessage(String message, String topic) throws MqttException {
         if (!mqttClient.isConnected()) throw new MqttClientNotConnectedException();
