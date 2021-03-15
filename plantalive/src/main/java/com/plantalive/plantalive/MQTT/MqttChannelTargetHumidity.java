@@ -1,13 +1,12 @@
 package com.plantalive.plantalive.MQTT;
 
-import com.plantalive.plantalive.persistence.TopicDAO;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MqttChannelCustom extends MqttChannel {
-    private final TopicDAO topic;
+public class MqttChannelTargetHumidity extends MqttChannel {
+    private final String topicName;
 
-    public MqttChannelCustom(TopicDAO topic) {
-        this.topic = topic;
+    public MqttChannelTargetHumidity(String topicName) {
+        this.topicName = topicName + "/targetHumidity";
     }
 
     @Override
@@ -17,7 +16,7 @@ public class MqttChannelCustom extends MqttChannel {
     }
 
     @Override
-    public TopicDAO getTopic() {
-        return topic;
+    public String getTopicName() {
+        return topicName;
     }
 }

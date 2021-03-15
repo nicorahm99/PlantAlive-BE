@@ -31,7 +31,7 @@ public class MQTTServiceImpl implements MQTTService {
 
     @Override
     public void subscribeTopic(MqttChannel channel) throws MqttException {
-        mqttClient.subscribe(channel.getTopic().getTopicName(), channel::handleMessage);
+        mqttClient.subscribe(channel.getTopicName(), channel::handleMessage);
     }
 
 }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class MqttChannelNew extends MqttChannel{
     private static final Logger logger = LoggerFactory.getLogger(MqttChannelNew.class);
 
-    private final TopicDAO topic;
+    private final String topicName;
     private final MQTTService mqttService;
     private final TopicRepository topicRepository;
 
@@ -22,7 +22,7 @@ public class MqttChannelNew extends MqttChannel{
     public MqttChannelNew(MQTTService mqttService, TopicRepository topicRepository) {
         this.mqttService = mqttService;
         this.topicRepository = topicRepository;
-        this.topic = new TopicDAO(MqttConstants.TOPIC_NEW);
+        this.topicName = MqttConstants.TOPIC_NEW;
     }
 
     @Override
@@ -30,10 +30,14 @@ public class MqttChannelNew extends MqttChannel{
         logger.info("Handle Message {} on Topic New", message);
         String newTopicName = message.toString();
         TopicDAO topic = topicRepository.save(new TopicDAO(newTopicName));
-        MqttChannel newChannel = new MqttChannelCustom(topic);
+        MqttChannel newInfoChannel = new MqttChannelInfo(topic.getTopicName());
+        MqttChannel newHumidityChannel = new MqttChannelTargetHumidity(topic.getTopicName());
         try {
             logger.info("Trying to subscribe to new Topic: {}", topic.getTopicName());
-            mqttService.subscribeTopic(newChannel);
+            mqttService.subscribeTopic(newInfoChannel);
+            logger.info("Successfully subscribed to new Topic: {}", newInfoChannel.getTopicName());
+            mqttService.subscribeTopic(newHumidityChannel);
+            logger.info("Successfully subscribed to new Topic: {}", newHumidityChannel.getTopicName());
         } catch (MqttException e) {
             //TODO Retry
             logger.error("Topic of Plant with MAC " + newTopicName + "could not be subscribed", e);
@@ -41,8 +45,7 @@ public class MqttChannelNew extends MqttChannel{
     }
 
     @Override
-    public TopicDAO getTopic() {
-        return topic;
+    public String getTopicName() {
+        return topicName;
     }
-
 }

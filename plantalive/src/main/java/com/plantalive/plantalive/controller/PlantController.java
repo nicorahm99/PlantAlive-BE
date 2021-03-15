@@ -1,6 +1,9 @@
 package com.plantalive.plantalive.controller;
 
+import com.plantalive.plantalive.MQTT.MqttChannelInfo;
 import com.plantalive.plantalive.MQTT.MqttChannelNew;
+import com.plantalive.plantalive.MQTT.MqttChannelTargetHumidity;
+import com.plantalive.plantalive.persistence.TopicRepository;
 import com.plantalive.plantalive.service.MQTTService;
 import com.plantalive.plantalive.service.PlantDTO;
 import com.plantalive.plantalive.service.PlantService;
@@ -24,14 +27,16 @@ public class PlantController {
     private final PlantService plantService;
     private final MQTTService mqttService;
     private final MqttChannelNew mqttChannelNew;
+    private final TopicRepository topicRepository;
 
     private final Logger logger = LoggerFactory.getLogger(PlantController.class);
 
     @Autowired
-    public PlantController(PlantService plantService, MQTTService mqttService, MqttChannelNew mqttChannelNew) {
+    public PlantController(PlantService plantService, MQTTService mqttService, MqttChannelNew mqttChannelNew, TopicRepository topicRepository) {
         this.plantService = plantService;
         this.mqttService = mqttService;
         this.mqttChannelNew = mqttChannelNew;
+        this.topicRepository = topicRepository;
     }
 
     @PostMapping
@@ -99,11 +104,23 @@ public class PlantController {
     }
 
     @PostConstruct
-    private void initMqttChannelNew(){
+    private void initExistingMqttChannels(){
         try {
+            logger.info("Trying to subscribe for Topic 'new'");
             mqttService.subscribeTopic(mqttChannelNew);
+            topicRepository.findAll().forEach(topicDAO -> {
+                try {
+                    logger.info("Trying to subscribe for Topic {}", topicDAO.getTopicName());
+                    mqttService.subscribeTopic(new MqttChannelInfo(topicDAO.getTopicName()));
+                    mqttService.subscribeTopic(new MqttChannelTargetHumidity(topicDAO.getTopicName()));
+                    logger.info("Successfully subscribed for Topics {}/info and /targetHumidity", topicDAO.getTopicName());
+                } catch (MqttException e) {
+                    logger.error("Channel '{}' could not be subscribed", topicDAO.getTopicName());
+                    e.printStackTrace();
+                }
+            });
         } catch (MqttException e) {
-            logger.error("Channel \"new\" could not be subscribed");
+            logger.error("Channel 'new' could not be subscribed");
             e.printStackTrace();
         }
     }
