@@ -36,26 +36,15 @@ public class ImageController {
     @PostMapping("/upload/{plantId}")
     public ResponseEntity<HttpStatus> uploadImage(@RequestParam("imageFile") MultipartFile file, @PathVariable long plantId) throws IOException {
         logger.debug("Original Image Byte Size - " + file.getBytes().length);
+        byte [] compressedBytes = compressBytes(file.getBytes());
+        if (compressedBytes.length > 1000000) return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).build();
         try {
-            ImageDAO img = new ImageDAO(plantId, file.getOriginalFilename(), file.getContentType(),
-                    compressBytes(file.getBytes()));
+            ImageDAO img = imageRepository.findByPlantId(plantId)
+                    .orElse(new ImageDAO(plantId));
+            img.setPicByte(compressedBytes);
+            img.setType(file.getContentType());
+            img.setName(file.getOriginalFilename());
             imageRepository.save(img);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e){
-            logger.error("Image could not be uploaded", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PutMapping("/upload/{plantId}")
-    public ResponseEntity<HttpStatus> updateImage(@RequestParam("imageFile") MultipartFile file, @PathVariable long plantId) throws IOException {
-        logger.debug("Original Image Byte Size - " + file.getBytes().length);
-        try {
-            ImageDAO imageDAO = imageRepository.findByPlantId(plantId).orElseThrow();
-            imageDAO.setPicByte(compressBytes(file.getBytes()));
-            imageDAO.setType(file.getContentType());
-            imageDAO.setName(file.getOriginalFilename());
-            imageRepository.save(imageDAO);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e){
             logger.error("Image could not be uploaded", e);
@@ -85,8 +74,6 @@ public class ImageController {
         }
     }
 
-
-    // compress the image bytes before storing it in the database
     public static byte[] compressBytes(byte[] data) {
         Deflater deflater = new Deflater();
         deflater.setInput(data);
@@ -102,11 +89,10 @@ public class ImageController {
         } catch (IOException e) {
             logException(e);
         }
-        System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
+        logger.debug("Compressed Image Byte Size - " + outputStream.toByteArray().length);
         return outputStream.toByteArray();
     }
 
-    // uncompress the image bytes before returning it to the angular application
 
     public static byte[] decompressBytes(byte[] data) {
         Inflater inflater = new Inflater();
