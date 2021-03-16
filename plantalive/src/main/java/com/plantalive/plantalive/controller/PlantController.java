@@ -118,7 +118,7 @@ public class PlantController {
             topicRepository.findAll().forEach(topicDAO -> {
                 try {
                     logger.info("Trying to subscribe for Topic {}", topicDAO.getTopicName());
-                    mqttService.subscribeTopic(new MqttChannelInfo(topicDAO.getTopicName()));
+                    mqttService.subscribeTopic(new MqttChannelInfo(topicDAO.getTopicName(), mqttService));
                     mqttService.subscribeTopic(new MqttChannelTargetHumidity(topicDAO.getTopicName(), mqttService));
                     logger.info("Successfully subscribed for Topics {}/info and /targetHumidity", topicDAO.getTopicName());
                 } catch (MqttException e) {

@@ -79,6 +79,7 @@ public class PlantServiceImpl implements PlantService {
                 plantDTO.getId(),
                 owner,
                 plantDTO.getTemperature(),
+                plantDTO.getWaterLevel(),
                 plantDTO.getCurrentHumidity(),
                 plantDTO.getTargetHumidity(),
                 plantDTO.getName(),
@@ -93,6 +94,7 @@ public class PlantServiceImpl implements PlantService {
                 plantDAO.getId(),
                 plantDAO.getOwner().getId(),
                 plantDAO.getTemperature(),
+                plantDAO.getWaterLevel(),
                 plantDAO.getCurrentHumidity(),
                 plantDAO.getTargetHumidity(),
                 plantDAO.getName(),
@@ -119,7 +121,8 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public PlantDAO resolvePlantByTopicName(String topicName) throws NotFoundException {
+    public PlantDAO resolvePlantByTopicName(String topicString) throws NotFoundException {
+        String topicName = topicString.split("/")[0];
         TopicDAO topic = topicRepository.findByTopicName(topicName).orElseThrow();
         if (topic.getPlantId() == 0){
             throw new NotFoundException(topicName);

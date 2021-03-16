@@ -23,6 +23,8 @@ public class PlantDAO {
 
     private double temperature;
 
+    private int waterLevel;
+
     private double currentHumidity;
     private double targetHumidity;
 

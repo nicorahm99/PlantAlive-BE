@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.NoSuchElementException;
 
+import static com.plantalive.plantalive.MQTT.MqttConstants.TARGET_HUMIDITY;
+
 public class MqttChannelTargetHumidity extends MqttChannel {
     private final String topicName;
     private final MQTTService mqttService;
@@ -26,8 +28,7 @@ public class MqttChannelTargetHumidity extends MqttChannel {
         logger.info("Received new targetHumidity from" + topic + " : " + message);
         try {
             JSONObject json = new JSONObject(new String(message.getPayload()));
-            double targetHumidity = json.getDouble("targetHumidity");
-            mqttService.updateTargetHumidityFrom(topic, targetHumidity);
+            mqttService.updateTargetHumidityFrom(topic, json.getDouble(TARGET_HUMIDITY));
         } catch (JSONException e) {
             logger.error("JSON from message" + message + " could not be parsed", e);
             e.printStackTrace();
