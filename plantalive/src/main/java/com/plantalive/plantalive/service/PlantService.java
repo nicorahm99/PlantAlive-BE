@@ -1,6 +1,7 @@
 package com.plantalive.plantalive.service;
 
 import com.plantalive.plantalive.persistence.PlantDAO;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface PlantService {
     PlantDTO getPlantById(long plantId);
 
     List<String> getAllAvailablePlants();
+
+    PlantDAO resolvePlantByTopicName(String topicName) throws NotFoundException;
 }

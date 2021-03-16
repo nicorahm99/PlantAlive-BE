@@ -31,7 +31,7 @@ public class MqttChannelNew extends MqttChannel{
         String newTopicName = message.toString();
         TopicDAO topic = topicRepository.save(new TopicDAO(newTopicName));
         MqttChannel newInfoChannel = new MqttChannelInfo(topic.getTopicName());
-        MqttChannel newHumidityChannel = new MqttChannelTargetHumidity(topic.getTopicName());
+        MqttChannel newHumidityChannel = new MqttChannelTargetHumidity(topic.getTopicName(), mqttService);
         try {
             logger.info("Trying to subscribe to new Topic: {}", topic.getTopicName());
             mqttService.subscribeTopic(newInfoChannel);

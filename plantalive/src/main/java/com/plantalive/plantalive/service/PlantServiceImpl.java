@@ -1,6 +1,7 @@
 package com.plantalive.plantalive.service;
 
 import com.plantalive.plantalive.persistence.*;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,8 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public PlantDTO createPlant(PlantDAO plant) {
-        return plantRepository.save(plant).toDTO();
+        var savedPlant = plantRepository.save(plant);
+        return convertPlantDAOtoDTO(savedPlant);
     }
 
     @Override
@@ -40,7 +42,8 @@ public class PlantServiceImpl implements PlantService {
         plantToUpdate.setName(plant.getName());
         plantToUpdate.setLocation(plant.getLocation());
 
-        return plantRepository.save(plantToUpdate).toDTO();
+        var updatedPlant = plantRepository.save(plantToUpdate);
+        return convertPlantDAOtoDTO(updatedPlant);
     }
 
 
@@ -64,7 +67,7 @@ public class PlantServiceImpl implements PlantService {
     @Override
     public List<PlantDTO> getPlantsFromUser(long userId) {
         List<PlantDTO> result = new ArrayList<>();
-        plantRepository.findAllByOwnerId(userId).forEach(plant -> result.add(plant.toDTO()));
+        plantRepository.findAllByOwnerId(userId).forEach(plant -> result.add(convertPlantDAOtoDTO(plant)));
         return result;
     }
 
@@ -84,9 +87,24 @@ public class PlantServiceImpl implements PlantService {
                 );
     }
 
+    public PlantDTO convertPlantDAOtoDTO(PlantDAO plantDAO){
+        TopicDAO topicDAO = topicRepository.findById(plantDAO.getTopicId()).orElse(new TopicDAO(""));
+        return new PlantDTO(
+                plantDAO.getId(),
+                plantDAO.getOwner().getId(),
+                plantDAO.getTemperature(),
+                plantDAO.getCurrentHumidity(),
+                plantDAO.getTargetHumidity(),
+                plantDAO.getName(),
+                plantDAO.getLocation(),
+                topicDAO.getTopicName()
+        );
+    }
+
     @Override
     public PlantDTO getPlantById(long plantId) {
-        return plantRepository.findById(plantId).orElseThrow().toDTO();
+        var plant = plantRepository.findById(plantId).orElseThrow();
+        return convertPlantDAOtoDTO(plant);
     }
 
     @Override
@@ -98,5 +116,14 @@ public class PlantServiceImpl implements PlantService {
             availableTopicNames.add(topic.getTopicName());
         }
         return availableTopicNames;
+    }
+
+    @Override
+    public PlantDAO resolvePlantByTopicName(String topicName) throws NotFoundException {
+        TopicDAO topic = topicRepository.findByTopicName(topicName).orElseThrow();
+        if (topic.getPlantId() == 0){
+            throw new NotFoundException(topicName);
+        }
+        return plantRepository.findById(topic.getPlantId()).orElseThrow();
     }
 }

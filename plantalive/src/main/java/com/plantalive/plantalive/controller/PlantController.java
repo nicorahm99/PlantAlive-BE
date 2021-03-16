@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -40,11 +41,16 @@ public class PlantController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<PlantDTO> createPlant(@RequestBody PlantDTO plant){
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(
-                    plantService.createPlant(plantService.convertPlantDTOtoDAO(plant))
-            );
+            logger.info("Trying to create plant with params {}", plant);
+            var createdPlant = plantService.createPlant(plantService.convertPlantDTOtoDAO(plant));
+            var topic = topicRepository.findByTopicName(plant.getTopicName()).orElseThrow();
+            topic.setPlantId(createdPlant.getId());
+            topicRepository.save(topic);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdPlant);
         } catch (Exception e){
             logger.error("Plant from user " + plant.getOwnerId() + " could not be created", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -54,11 +60,12 @@ public class PlantController {
     @PutMapping
     public ResponseEntity<PlantDTO> updatePlant(@RequestBody PlantDTO plant){
         try {
+            logger.info("Trying to update plant with params {}", plant);
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     plantService.updatePlant(plantService.convertPlantDTOtoDAO(plant))
             );
         } catch (Exception e){
-            logger.error("Plant from user " + plant.getOwnerId() + " could not be created", e);
+            logger.error("Plant from user " + plant.getOwnerId() + " could not updated", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -112,7 +119,7 @@ public class PlantController {
                 try {
                     logger.info("Trying to subscribe for Topic {}", topicDAO.getTopicName());
                     mqttService.subscribeTopic(new MqttChannelInfo(topicDAO.getTopicName()));
-                    mqttService.subscribeTopic(new MqttChannelTargetHumidity(topicDAO.getTopicName()));
+                    mqttService.subscribeTopic(new MqttChannelTargetHumidity(topicDAO.getTopicName(), mqttService));
                     logger.info("Successfully subscribed for Topics {}/info and /targetHumidity", topicDAO.getTopicName());
                 } catch (MqttException e) {
                     logger.error("Channel '{}' could not be subscribed", topicDAO.getTopicName());

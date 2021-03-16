@@ -16,9 +16,8 @@ public class PlantDTO {
     private String name;
     private String location;
     private String topicName;
-    private long topicId;
 
-    public PlantDTO(long id, long ownerId, double temperature, double currentHumidity, double targetHumidity, String name, String location, long topicId) {
+    public PlantDTO(long id, long ownerId, double temperature, double currentHumidity, double targetHumidity, String name, String location) {
         this.id = id;
         this.ownerId =ownerId;
         this.temperature = temperature;
@@ -26,6 +25,5 @@ public class PlantDTO {
         this.targetHumidity = targetHumidity;
         this.name = name;
         this.location = location;
-        this.topicId = topicId;
     }
 }

@@ -1,6 +1,7 @@
 package com.plantalive.plantalive.service;
 
 import com.plantalive.plantalive.MQTT.MqttChannel;
+import javassist.NotFoundException;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -28,4 +29,6 @@ public interface MQTTService {
         options.setConnectionTimeout(10);
         return options;
     }
+
+    void updateTargetHumidityFrom(String topic, double targetHumidity) throws NotFoundException;
 }
