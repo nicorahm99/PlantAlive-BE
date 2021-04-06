@@ -26,7 +26,7 @@ public class MqttChannelTargetHumidity extends MqttChannel {
 
     @Override
     public void handleMessage(String topic, MqttMessage message) {
-        logger.info("Received new targetHumidity from" + topic + " : " + message);
+        logger.info("Received new targetHumidity from " + topic + " : " + message);
         try {
             JSONObject json = new JSONObject(new String(message.getPayload()));
             mqttService.updateTargetHumidityFrom(topic, json.getDouble(TARGET_HUMIDITY));

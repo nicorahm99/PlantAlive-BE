@@ -2,6 +2,8 @@ package com.plantalive.plantalive.service;
 
 import com.plantalive.plantalive.persistence.*;
 import javassist.NotFoundException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static com.plantalive.plantalive.MQTT.MqttConstants.TARGET_HUMIDITY;
 
 @Service
 public class PlantServiceImpl implements PlantService {
@@ -136,5 +140,12 @@ public class PlantServiceImpl implements PlantService {
     @Override
     public Optional<TopicDAO> findTopicByName(String topicName){
         return topicRepository.findByTopicName(topicName);
+    }
+
+    @Override
+    public JSONObject encodeTargetHumidityToJSON(double targetHumidity) throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put(TARGET_HUMIDITY, targetHumidity);
+        return json;
     }
 }

@@ -66,7 +66,7 @@ public class PlantController {
             logger.info("Trying to update plant with params {}", plant);
             PlantDTO updatedPlant = plantService.updatePlant(plantService.convertPlantDTOtoDAO(plant));
             mqttService.publishMqttMessage(
-                    String.valueOf(updatedPlant.getTargetHumidity()),
+                    plantService.encodeTargetHumidityToJSON(updatedPlant.getTargetHumidity()).toString(),
                     updatedPlant.getTopicName() + "/" + TOPIC_TARGET_HUMIDITY);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedPlant);
         } catch (Exception e){

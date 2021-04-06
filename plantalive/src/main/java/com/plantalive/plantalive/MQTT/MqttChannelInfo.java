@@ -25,7 +25,7 @@ public class MqttChannelInfo extends MqttChannel {
 
     @Override
     public void handleMessage(String topic, MqttMessage message) {
-        logger.info("Received new info from" + topic + " : " + message);
+        logger.info("Received new info from " + topic + " : " + message);
         try {
             JSONObject plantInfoJson = new JSONObject(new String(message.getPayload()));
             mqttService.updatePlantInfo(topic, plantInfoJson);

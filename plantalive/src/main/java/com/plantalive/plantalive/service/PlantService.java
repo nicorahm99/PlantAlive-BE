@@ -3,6 +3,8 @@ package com.plantalive.plantalive.service;
 import com.plantalive.plantalive.persistence.PlantDAO;
 import com.plantalive.plantalive.persistence.TopicDAO;
 import javassist.NotFoundException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,4 +27,6 @@ public interface PlantService {
     PlantDAO resolvePlantByTopicName(String topicName) throws NotFoundException;
 
     Optional<TopicDAO> findTopicByName(String topicName);
+
+    JSONObject encodeTargetHumidityToJSON(double targetHumidity) throws JSONException;
 }
