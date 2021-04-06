@@ -37,6 +37,7 @@ public class MQTTServiceImpl implements MQTTService {
 
     @Override
     public void publishMqttMessage(String message, String topic) throws MqttException {
+        logger.info("Trying to publish message \"{}\" on topic: {}", message, topic);
         if (!mqttClient.isConnected()) throw new MqttClientNotConnectedException();
         MqttMessage mqttMessage = buildMqttMessage(message);
         mqttMessage.setQos(MqttConstants.QOS_EXACTLY_ONCE);
