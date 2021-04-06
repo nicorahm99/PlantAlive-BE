@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class PlantServiceImpl implements PlantService {
@@ -128,5 +129,10 @@ public class PlantServiceImpl implements PlantService {
             throw new NotFoundException(topicName);
         }
         return plantRepository.findById(topic.getPlantId()).orElseThrow();
+    }
+
+    @Override
+    public Optional<TopicDAO> findTopicByName(String topicName){
+        return topicRepository.findByTopicName(topicName);
     }
 }

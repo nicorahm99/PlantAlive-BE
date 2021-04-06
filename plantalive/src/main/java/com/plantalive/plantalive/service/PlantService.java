@@ -1,11 +1,13 @@
 package com.plantalive.plantalive.service;
 
 import com.plantalive.plantalive.persistence.PlantDAO;
+import com.plantalive.plantalive.persistence.TopicDAO;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public interface PlantService {
@@ -21,4 +23,6 @@ public interface PlantService {
     List<String> getAllAvailablePlants();
 
     PlantDAO resolvePlantByTopicName(String topicName) throws NotFoundException;
+
+    Optional<TopicDAO> findTopicByName(String topicName);
 }

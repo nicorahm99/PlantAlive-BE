@@ -1,7 +1,7 @@
 #! /bin/bash
 
 echo "Building JAR..."
-mvn package > /dev/null 
+mvn install > /dev/null
 
 echo "Build DONE!"
 
@@ -9,7 +9,6 @@ mkdir $HOME/deployableJARs > /dev/null 2>&1
 
 now=$(date +'%d-%m-%Y-%T')
 echo "Timestamp: $now"
-
-cp ./target/plantalive-0.0.1-SNAPSHOT.jar $HOME/deployableJARs/"plantalive-build-$now.jar"
+tar -zcf $HOME/deployableJARs/plantalive-build-$now.tar.gz ./target
 
 echo "Copying files DONE!"

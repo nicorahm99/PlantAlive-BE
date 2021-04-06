@@ -66,4 +66,9 @@ public class MQTTServiceImpl implements MQTTService {
         plantRepository.save(plant);
     }
 
+    @Override
+    public boolean isTopicAlreadyKnown(String topicName){
+        return plantService.findTopicByName(topicName).isPresent();
+    }
+
 }

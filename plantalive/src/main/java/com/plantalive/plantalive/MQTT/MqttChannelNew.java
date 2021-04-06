@@ -32,6 +32,10 @@ public class MqttChannelNew extends MqttChannel{
         TopicDAO topic = topicRepository.save(new TopicDAO(newTopicName));
         MqttChannel newInfoChannel = new MqttChannelInfo(topic.getTopicName(), mqttService);
         MqttChannel newHumidityChannel = new MqttChannelTargetHumidity(topic.getTopicName(), mqttService);
+        if (mqttService.isTopicAlreadyKnown(topicName)){
+            logger.info("Given Topic already exists: {}", topicName);
+            return;
+        }
         try {
             logger.info("Trying to subscribe to new Topic: {}", topic.getTopicName());
             mqttService.subscribeTopic(newInfoChannel);
