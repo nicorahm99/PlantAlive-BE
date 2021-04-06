@@ -2,6 +2,7 @@ package com.plantalive.plantalive.service;
 
 import com.plantalive.plantalive.persistence.*;
 import javassist.NotFoundException;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,17 +16,19 @@ import java.util.Optional;
 public class PlantServiceImpl implements PlantService {
 
     @Autowired
-    public PlantServiceImpl(PlantRepository plantRepository, UserServiceImpl userService, TopicRepository topicRepository, ImageRepository imageRepository) {
+    public PlantServiceImpl(PlantRepository plantRepository, UserServiceImpl userService, TopicRepository topicRepository, ImageRepository imageRepository, MQTTService mqttService) {
         this.plantRepository = plantRepository;
         this.userService = userService;
         this.topicRepository = topicRepository;
         this.imageRepository = imageRepository;
+        this.mqttService = mqttService;
     }
 
     private final PlantRepository plantRepository;
     private final UserServiceImpl userService;
     private final TopicRepository topicRepository;
     private final ImageRepository imageRepository;
+    private final MQTTService mqttService;
 
 
 
@@ -35,14 +38,17 @@ public class PlantServiceImpl implements PlantService {
         return convertPlantDAOtoDTO(savedPlant);
     }
 
+    @Transactional
     @Override
-    public PlantDTO updatePlant(PlantDAO plant) throws NoSuchElementException {
+    public PlantDTO updatePlant(PlantDAO plant) throws NoSuchElementException, MqttException {
         PlantDAO plantToUpdate = plantRepository.findById(plant.getId()).orElseThrow();
 
         plantToUpdate.setTargetHumidity(plant.getTargetHumidity());
         plantToUpdate.setName(plant.getName());
         plantToUpdate.setLocation(plant.getLocation());
 
+        TopicDAO topic = topicRepository.findById(plantToUpdate.getTopicId()).orElseThrow();
+        mqttService.publishMqttMessage(String.valueOf(plant.getTargetHumidity()), topic.getTopicName());
         var updatedPlant = plantRepository.save(plantToUpdate);
         return convertPlantDAOtoDTO(updatedPlant);
     }
