@@ -30,9 +30,8 @@ public class MqttChannelTargetHumidity extends MqttChannel {
         try {
             JSONObject json = new JSONObject(new String(message.getPayload()));
             mqttService.updateTargetHumidityFrom(topic, json.getDouble(TARGET_HUMIDITY));
-        } catch (JSONException e) {
-            logger.error("JSON from message" + message + " could not be parsed", e);
-            e.printStackTrace();
+        } catch (JSONException ignored) {
+            // Reflective message form update humidity. Is ignored because it is meant to be used by the Pot and not the Server
         } catch (NoSuchElementException e){
             logger.error("Topic or plant not found: " + message, e);
         } catch (NotFoundException e){
