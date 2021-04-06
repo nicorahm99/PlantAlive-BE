@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.NoSuchElementException;
 
 import static com.plantalive.plantalive.MQTT.MqttConstants.TARGET_HUMIDITY;
+import static com.plantalive.plantalive.MQTT.MqttConstants.TOPIC_TARGET_HUMIDITY;
 
 public class MqttChannelTargetHumidity extends MqttChannel {
     private final String topicName;
@@ -19,7 +20,7 @@ public class MqttChannelTargetHumidity extends MqttChannel {
 
 
     public MqttChannelTargetHumidity(String topicName, MQTTService mqttService) {
-        this.topicName = topicName + "/targetHumidity";
+        this.topicName = topicName + "/" + TOPIC_TARGET_HUMIDITY;
         this.mqttService = mqttService;
     }
 

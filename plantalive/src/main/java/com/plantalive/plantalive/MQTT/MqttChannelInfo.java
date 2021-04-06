@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.NoSuchElementException;
 
+import static com.plantalive.plantalive.MQTT.MqttConstants.TOPIC_INFO;
+
 public class MqttChannelInfo extends MqttChannel {
     private final String topicName;
     private final Logger logger = LoggerFactory.getLogger(MqttChannelInfo.class);
@@ -17,7 +19,7 @@ public class MqttChannelInfo extends MqttChannel {
     private final MQTTService mqttService;
 
     public MqttChannelInfo(String topicName, MQTTService mqttService) {
-        this.topicName = topicName + "/info";
+        this.topicName = topicName + "/" + TOPIC_INFO;
         this.mqttService = mqttService;
     }
 
