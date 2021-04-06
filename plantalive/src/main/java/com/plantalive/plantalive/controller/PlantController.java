@@ -57,13 +57,14 @@ public class PlantController {
         }
     }
 
+    @Transactional
     @PutMapping
     public ResponseEntity<PlantDTO> updatePlant(@RequestBody PlantDTO plant){
         try {
             logger.info("Trying to update plant with params {}", plant);
-            return ResponseEntity.status(HttpStatus.CREATED).body(
-                    plantService.updatePlant(plantService.convertPlantDTOtoDAO(plant))
-            );
+            PlantDTO updatedPlant = plantService.updatePlant(plantService.convertPlantDTOtoDAO(plant));
+            mqttService.publishMqttMessage(String.valueOf(updatedPlant.getTargetHumidity()), updatedPlant.getTopicName());
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedPlant);
         } catch (Exception e){
             logger.error("Plant from user " + plant.getOwnerId() + " could not updated", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
