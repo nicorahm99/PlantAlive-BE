@@ -20,6 +20,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.plantalive.plantalive.MQTT.MqttConstants.TOPIC_TARGET_HUMIDITY;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/plants")
@@ -63,7 +65,9 @@ public class PlantController {
         try {
             logger.info("Trying to update plant with params {}", plant);
             PlantDTO updatedPlant = plantService.updatePlant(plantService.convertPlantDTOtoDAO(plant));
-            mqttService.publishMqttMessage(String.valueOf(updatedPlant.getTargetHumidity()), updatedPlant.getTopicName());
+            mqttService.publishMqttMessage(
+                    String.valueOf(updatedPlant.getTargetHumidity()),
+                    updatedPlant.getTopicName() + "/" + TOPIC_TARGET_HUMIDITY);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedPlant);
         } catch (Exception e){
             logger.error("Plant from user " + plant.getOwnerId() + " could not updated", e);
