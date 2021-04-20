@@ -53,5 +53,20 @@ public class UserController {
         }
     }
 
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userToUpdate){
+        try {
+            if(userService.getUserById(userToUpdate.getId()) != null){
+                return new ResponseEntity<>(userService.updateUser(userToUpdate), HttpStatus.OK);
+            }
+            throw new DataIntegrityViolationException("User doesnt exist!");
+        } catch (DataIntegrityViolationException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
+            logger.error("Exception", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
