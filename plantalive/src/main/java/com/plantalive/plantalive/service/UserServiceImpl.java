@@ -2,6 +2,7 @@ package com.plantalive.plantalive.service;
 
 import com.plantalive.plantalive.persistence.UserDAO;
 import com.plantalive.plantalive.persistence.UserRepository;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO createUser(UserDTO newUser) {
-        return userRepository.save(newUser.toDAO()).toSafeDTO();
+        UserDAO createdUser = userRepository.save(newUser.toDAO());
+        return createdUser.toSafeDTO();
     }
 
     @Override
     public UserDTO checkCredentials(String mail, String password) {
-        return userRepository.findByMailAndPassword(mail, password).orElseThrow().toSafeDTO();
+        UserDAO foundUser = userRepository.findByMailAndPassword(mail, password).orElseThrow();
+        return foundUser.toSafeDTO();
+    }
+    @Override
+    public UserDTO updateUser(UserDTO userToUpdate){
+        UserDAO updatedUser = userRepository.save(userToUpdate.toDAO());
+        return updatedUser.toSafeDTO();
     }
 }
