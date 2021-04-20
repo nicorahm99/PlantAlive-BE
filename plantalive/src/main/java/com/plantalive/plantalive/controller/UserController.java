@@ -53,7 +53,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userToUpdate){
         try {
             if(userService.getUserById(userToUpdate.getId()) != null){
