@@ -100,7 +100,7 @@ public class PlantServiceImpl implements PlantService {
         return new PlantDTO(
                 plantDAO.getId(),
                 plantDAO.getOwner().getId(),
-                plantDAO.getTemperature(),
+                Math.round((plantDAO.getTemperature()*10)/10),
                 plantDAO.getWaterLevel(),
                 plantDAO.getCurrentHumidity(),
                 plantDAO.getTargetHumidity(),
@@ -147,5 +147,12 @@ public class PlantServiceImpl implements PlantService {
         JSONObject json = new JSONObject();
         json.put(TARGET_HUMIDITY, targetHumidity);
         return json;
+    }
+
+    @Override
+    public double getTargetHumidityByTopic(String topicName){
+        TopicDAO topic = topicRepository.findByTopicName(topicName).orElseThrow();
+        PlantDAO plant = plantRepository.findById(topic.getPlantId()).orElseThrow();
+        return plant.getTargetHumidity();
     }
 }

@@ -37,4 +37,6 @@ public interface MQTTService {
     void updatePlantInfo(String topic, JSONObject plantInfoJson) throws NotFoundException, JSONException;
 
     boolean isTopicAlreadyKnown(String topicName);
+
+    void publishTargetHumidityOnTopic(String topicName) throws MqttException;
 }

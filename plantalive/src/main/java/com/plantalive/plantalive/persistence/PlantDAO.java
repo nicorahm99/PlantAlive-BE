@@ -1,10 +1,8 @@
 package com.plantalive.plantalive.persistence;
 
-import com.plantalive.plantalive.service.PlantDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 

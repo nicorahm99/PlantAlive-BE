@@ -29,4 +29,6 @@ public interface PlantService {
     Optional<TopicDAO> findTopicByName(String topicName);
 
     JSONObject encodeTargetHumidityToJSON(double targetHumidity) throws JSONException;
+
+    double getTargetHumidityByTopic(String topicName);
 }

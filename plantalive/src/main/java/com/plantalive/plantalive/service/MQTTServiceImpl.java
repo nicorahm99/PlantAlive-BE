@@ -72,4 +72,13 @@ public class MQTTServiceImpl implements MQTTService {
         return plantService.findTopicByName(topicName).isPresent();
     }
 
+    @Override
+    public void publishTargetHumidityOnTopic(String topic) throws MqttException {
+        String topicName = topic.split("/")[0];
+        double targetHumidity = plantService.getTargetHumidityByTopic(topicName);
+        String message = "{\"" + TARGET_HUMIDITY + "\":" + targetHumidity + "}";
+        topicName = topicName + "/" + TARGET_HUMIDITY;
+        publishMqttMessage(message, topicName);
+    }
+
 }

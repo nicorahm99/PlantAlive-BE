@@ -29,6 +29,7 @@ public class MqttChannelInfo extends MqttChannel {
         try {
             JSONObject plantInfoJson = new JSONObject(new String(message.getPayload()));
             mqttService.updatePlantInfo(topic, plantInfoJson);
+            mqttService.publishTargetHumidityOnTopic(topic);
         } catch (JSONException e) {
             logger.error("JSON from message" + message + " could not be parsed", e);
             e.printStackTrace();
@@ -36,6 +37,8 @@ public class MqttChannelInfo extends MqttChannel {
             logger.error("Topic or plant not found: " + message, e);
         } catch (NotFoundException e){
             logger.warn("Topic " + topic + "has no plant connected", e);
+        } catch (Exception e){
+            logger.error("Unknown error: ", e);
         }
     }
 
